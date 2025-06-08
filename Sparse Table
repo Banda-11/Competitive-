@@ -1,0 +1,38 @@
+const int N = 2e5;
+ll n, q , arr[N] , t[N][22];
+ll merge(ll a , ll b){
+    return min(a,b);
+}
+void build(){
+    for(int i = 0; i < n; i++){
+        t[i][0] = arr[i];
+    }
+    for(int pw = 1; (1<<pw) <= n; pw++){
+        for(int i = 0; i + (1<<pw) <= n;i++){
+            t[i][pw] = merge(t[i][pw-1] ,t[i+(1<<(pw-1))][pw-1]);
+        }
+
+    }
+}
+==============================================================================
+==> for any static range query problem
+======================================
+ll query(int l , int r){
+    int sz = r - l + 1;
+    ll ret = LLONG_MAX;
+    for(int i = 21 ; i >= 0; i--){
+        if((sz >> i) & 1){
+            ret = merge(ret , t[l][i]);
+            l += (1 << i);
+        }
+    }
+    return ret;
+}
+
+==============================================================================
+==> for only (max||min) (lcm || gcd) ==> not for prefix, suffix nor XOR
+ll query2(int l , int r){
+    int sz = r - l + 1;
+    int pw = __lg(sz); // find nearst k (k <= floor(log2(size))	
+    return merge(t[l][pw] , t[r - (1 << pw) + 1][pw]);
+}
